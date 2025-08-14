@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { House, Motorcycle, ChefHat } from '@phosphor-icons/react'
 // Import main view components
@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card shadow-sm">
+      <header className="border-b bg-card shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -22,38 +22,38 @@ function App() {
                 <ChefHat className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-foreground">MomFood</h1>
-                <p className="text-sm text-muted-foreground">طعام الأم</p>
+                <h1 className="text-xl font-bold text-foreground font-display">MomFood</h1>
+                <p className="text-sm text-muted-foreground arabic-text" lang="ar">لقمه يمه</p>
               </div>
             </div>
-            
-            <div className="flex items-center gap-2">
+
+            <div className="hidden md:flex items-center gap-2">
               <Button
                 variant={currentRole === 'customer' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCurrentRole('customer')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 btn-primary"
               >
                 <House className="h-4 w-4" />
-                <span className="hidden sm:inline">العملاء</span>
+                <span className="arabic-text" lang="ar">العملاء</span>
               </Button>
               <Button
                 variant={currentRole === 'kitchen' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCurrentRole('kitchen')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 btn-primary"
               >
                 <ChefHat className="h-4 w-4" />
-                <span className="hidden sm:inline">المطاعم</span>
+                <span className="arabic-text" lang="ar">المطاعم</span>
               </Button>
               <Button
                 variant={currentRole === 'driver' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setCurrentRole('driver')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 btn-primary"
               >
                 <Motorcycle className="h-4 w-4" />
-                <span className="hidden sm:inline">السائقين</span>
+                <span className="arabic-text" lang="ar">السائقين</span>
               </Button>
             </div>
           </div>
@@ -61,47 +61,46 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        {currentRole === 'customer' && <CustomerView />}
-        {currentRole === 'kitchen' && <KitchenView />}
-        {currentRole === 'driver' && <DriverView />}
+      <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
+        <div className="animate-fade-in">
+          {currentRole === 'customer' && <CustomerView />}
+          {currentRole === 'kitchen' && <KitchenView />}
+          {currentRole === 'driver' && <DriverView />}
+        </div>
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t md:hidden shadow-lg z-50">
         <div className="flex items-center justify-around py-2">
           <Button
             variant={currentRole === 'customer' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setCurrentRole('customer')}
-            className="flex flex-col items-center gap-1 h-auto py-2"
+            className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
           >
             <House className="h-5 w-5" />
-            <span className="text-xs">العملاء</span>
+            <span className="text-xs arabic-text" lang="ar">العملاء</span>
           </Button>
           <Button
             variant={currentRole === 'kitchen' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setCurrentRole('kitchen')}
-            className="flex flex-col items-center gap-1 h-auto py-2"
+            className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
           >
             <ChefHat className="h-5 w-5" />
-            <span className="text-xs">المطاعم</span>
+            <span className="text-xs arabic-text" lang="ar">المطاعم</span>
           </Button>
           <Button
             variant={currentRole === 'driver' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setCurrentRole('driver')}
-            className="flex flex-col items-center gap-1 h-auto py-2"
+            className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
           >
             <Motorcycle className="h-5 w-5" />
-            <span className="text-xs">السائقين</span>
+            <span className="text-xs arabic-text" lang="ar">السائقين</span>
           </Button>
         </div>
       </nav>
-
-      {/* Spacer for mobile bottom nav */}
-      <div className="h-20 md:hidden" />
     </div>
   )
 }

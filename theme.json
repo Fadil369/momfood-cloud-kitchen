@@ -1,1 +1,74 @@
-{}
+﻿{
+  "extend": {
+    "colors": {
+      "primary": {
+        "DEFAULT": "oklch(0.65 0.15 35)",
+        "foreground": "oklch(1 0 0)"
+      },
+      "secondary": {
+        "DEFAULT": "oklch(0.45 0.12 145)",
+        "foreground": "oklch(1 0 0)"
+      },
+      "accent": {
+        "DEFAULT": "oklch(0.75 0.18 55)",
+        "foreground": "oklch(1 0 0)"
+      },
+      "background": "oklch(0.95 0.02 85)",
+      "foreground": "oklch(0.15 0 0)",
+      "card": {
+        "DEFAULT": "oklch(0.98 0.01 85)",
+        "foreground": "oklch(0.15 0 0)"
+      },
+      "popover": {
+        "DEFAULT": "oklch(0.98 0.01 85)",
+        "foreground": "oklch(0.15 0 0)"
+      },
+      "muted": {
+        "DEFAULT": "oklch(0.9 0.02 85)",
+        "foreground": "oklch(0.4 0 0)"
+      },
+      "destructive": {
+        "DEFAULT": "oklch(0.55 0.2 25)",
+        "foreground": "oklch(1 0 0)"
+      },
+      "border": "oklch(0.85 0.02 85)",
+      "input": "oklch(0.85 0.02 85)",
+      "ring": "oklch(0.65 0.15 35)"
+    },
+    "fontFamily": {
+      "arabic": ["'Noto Sans Arabic'", "ui-sans-serif", "system-ui"],
+      "sans": ["Inter", "ui-sans-serif", "system-ui"],
+      "display": ["'Noto Sans Arabic'", "Inter", "ui-sans-serif", "system-ui"]
+    },
+    "fontSize": {
+      "xs": ["0.75rem", { "lineHeight": "1.5", "letterSpacing": "0.025em" }],
+      "sm": ["0.875rem", { "lineHeight": "1.5", "letterSpacing": "0.01em" }],
+      "base": ["1rem", { "lineHeight": "1.6", "letterSpacing": "0" }],
+      "lg": ["1.125rem", { "lineHeight": "1.6", "letterSpacing": "-0.01em" }],
+      "xl": ["1.25rem", { "lineHeight": "1.5", "letterSpacing": "-0.015em" }],
+      "2xl": ["1.5rem", { "lineHeight": "1.4", "letterSpacing": "-0.02em" }],
+      "3xl": ["1.875rem", { "lineHeight": "1.3", "letterSpacing": "-0.025em" }],
+      "4xl": ["2.25rem", { "lineHeight": "1.2", "letterSpacing": "-0.03em" }]
+    },
+    "spacing": {
+      "18": "4.5rem",
+      "88": "22rem",
+      "92": "23rem"
+    },
+    "animation": {
+      "fade-in": "fadeIn 0.5s ease-in-out",
+      "slide-up": "slideUp 0.3s ease-out",
+      "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+    },
+    "keyframes": {
+      "fadeIn": {
+        "0%": { "opacity": "0" },
+        "100%": { "opacity": "1" }
+      },
+      "slideUp": {
+        "0%": { "transform": "translateY(10px)", "opacity": "0" },
+        "100%": { "transform": "translateY(0)", "opacity": "1" }
+      }
+    }
+  }
+}

@@ -1,0 +1,192 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Primary Colors - Warm Terracotta */
+  --primary: oklch(0.65 0.15 35);
+  --primary-foreground: oklch(1 0 0);
+  
+  /* Secondary Colors - Deep Green */
+  --secondary: oklch(0.45 0.12 145);
+  --secondary-foreground: oklch(1 0 0);
+  
+  /* Accent Colors - Golden Orange */
+  --accent: oklch(0.75 0.18 55);
+  --accent-foreground: oklch(1 0 0);
+  
+  /* Background Colors - Cream */
+  --background: oklch(0.95 0.02 85);
+  --foreground: oklch(0.15 0 0);
+  
+  /* Card Colors */
+  --card: oklch(0.98 0.01 85);
+  --card-foreground: oklch(0.15 0 0);
+  
+  /* Popover Colors */
+  --popover: oklch(0.98 0.01 85);
+  --popover-foreground: oklch(0.15 0 0);
+  
+  /* Muted Colors */
+  --muted: oklch(0.9 0.02 85);
+  --muted-foreground: oklch(0.4 0 0);
+  
+  /* Border Colors */
+  --border: oklch(0.85 0.02 85);
+  --input: oklch(0.85 0.02 85);
+  --ring: oklch(0.65 0.15 35);
+  
+  /* Destructive Colors */
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+  
+  /* Radius */
+  --radius: 0.5rem;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.1 0.02 35);
+    --foreground: oklch(0.95 0.02 85);
+    --card: oklch(0.12 0.02 35);
+    --card-foreground: oklch(0.95 0.02 85);
+    --popover: oklch(0.12 0.02 35);
+    --popover-foreground: oklch(0.95 0.02 85);
+    --muted: oklch(0.2 0.02 35);
+    --muted-foreground: oklch(0.7 0.02 85);
+    --border: oklch(0.25 0.02 35);
+    --input: oklch(0.25 0.02 35);
+  }
+}
+
+/* Base styles */
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  direction: ltr;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Arabic text styling */
+[lang="ar"], .arabic-text {
+  font-family: 'Noto Sans Arabic', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+/* Mixed content containers */
+.mixed-content {
+  unicode-bidi: plaintext;
+}
+
+/* Enhanced button hover effects */
+.btn-primary {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: oklch(0.6 0.15 35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(0.65 0.15 35 / 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px oklch(0.15 0 0 / 0.15);
+}
+
+/* Status indicators */
+.status-pending {
+  background-color: oklch(0.8 0.1 65);
+  color: oklch(0.3 0.1 65);
+}
+
+.status-preparing {
+  background-color: oklch(0.8 0.1 220);
+  color: oklch(0.3 0.1 220);
+}
+
+.status-ready {
+  background-color: oklch(0.8 0.1 145);
+  color: oklch(0.3 0.1 145);
+}
+
+.status-delivered {
+  background-color: oklch(0.85 0.05 0);
+  color: oklch(0.4 0.05 0);
+}
+
+/* Loading animations */
+.pulse-gentle {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Mobile touch improvements */
+@media (pointer: coarse) {
+  button, .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Smooth animations */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
