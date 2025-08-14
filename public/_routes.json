@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "routes": [
+    {
+      "serve": "/assets/*"
+    },
+    {
+      "match": "/*",
+      "serve": "/index.html"
+    }
+  ]
+}

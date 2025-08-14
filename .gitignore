@@ -31,3 +31,8 @@ packages
 .devcontainer/
 
 .spark-workbench-id
+
+# Cloudflare
+.wrangler
+wrangler.toml.backup
+*.backup

@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/hooks/useKV'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
@@ -11,14 +11,14 @@ import {
   Motorcycle,
   MapPin,
   Clock,
-  DollarSign,
-  Navigation,
+  CurrencyDollar,
+  NavigationArrow,
   Phone,
   CheckCircle,
   Package,
   Star,
   Fuel,
-  Route,
+  Path,
   Bell,
   TrendingUp
 } from '@phosphor-icons/react'
@@ -203,7 +203,7 @@ export function DriverView() {
                 <p className="text-2xl font-bold">{earnings.total} ريال</p>
                 <p className="text-xs text-muted-foreground arabic-text">انقر للتفاصيل</p>
               </div>
-              <DollarSign className="h-8 w-8 text-green-600" />
+              <CurrencyDollar className="h-8 w-8 text-green-600" />
             </div>
           </CardContent>
         </Card>
@@ -239,7 +239,7 @@ export function DriverView() {
                 <p className="text-sm font-medium text-muted-foreground arabic-text">المسافة اليوم</p>
                 <p className="text-2xl font-bold">{stats.totalDistance} كم</p>
               </div>
-              <Route className="h-8 w-8 text-purple-600" />
+              <Path className="h-8 w-8 text-purple-600" />
             </div>
           </CardContent>
         </Card>
@@ -339,7 +339,7 @@ export function DriverView() {
                 onClick={simulateNavigation}
                 className="flex items-center gap-2"
               >
-                <Navigation className="h-4 w-4" />
+                <NavigationArrow className="h-4 w-4" />
                 <span className="arabic-text">التنقل</span>
               </Button>
 

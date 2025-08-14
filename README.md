@@ -171,9 +171,44 @@ npm run test:coverage
 npm run build
 
 # The build files will be in the `dist` directory
+# Optimized for Cloudflare Pages deployment
 ```
 
-#### Deployment Options
+#### Manual Deployment to Cloudflare Pages
+```bash
+# Install Wrangler CLI (if not already installed)
+npm install -g wrangler
+
+# Login to Cloudflare
+wrangler login
+
+# Deploy using the included script
+./deploy.sh
+
+# Or deploy manually
+wrangler pages deploy dist --project-name=momfood-cloud-kitchen
+```
+
+###  Deployment
+
+#### Cloudflare Pages (Recommended)
+The application is ready for deployment to Cloudflare Pages with automatic CI/CD.
+
+**Quick Deploy:**
+1. Fork this repository
+2. Connect to Cloudflare Pages
+3. Set build command: `npm run build`
+4. Set output directory: `dist`
+5. Deploy!
+
+**Automatic Deployment:**
+- GitHub Actions workflow included
+- Deploys on every push to main branch
+- Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+#### Other Deployment Options
 - **Vercel**: Recommended for easy deployment
 - **Netlify**: Alternative with great performance
 - **Azure Static Web Apps**: Enterprise-grade hosting
