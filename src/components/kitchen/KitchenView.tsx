@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/hooks/useLocalStorage'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -12,17 +12,17 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   ChartLine,
   Receipt,
-  Settings,
+  Gear,
   Plus,
   Clock,
   CheckCircle,
   XCircle,
-  TrendingUp,
+  TrendUp,
   Users,
   Star,
   Bell,
   Package,
-  DollarSign
+  CurrencyDollar
 } from '@phosphor-icons/react'
 import { mockOrders, type Order } from '@/lib/mockData'
 
@@ -74,8 +74,10 @@ export function KitchenView() {
       )
       setOrders(kitchenOrders)
     }
+  }, []) // Empty dependency array to run only once
 
-    // Update stats
+  useEffect(() => {
+    // Update stats when orders change
     const activeOrders = orders.filter(order => 
       ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status)
     ).length
@@ -90,7 +92,7 @@ export function KitchenView() {
       todayOrders: orders.length,
       todayRevenue
     }))
-  }, [orders, setStats])
+  }, [orders.length]) // Only depend on orders.length to avoid infinite loop
 
   const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
     setOrders(currentOrders =>
@@ -206,7 +208,7 @@ export function KitchenView() {
                 <p className="text-sm font-medium text-muted-foreground arabic-text">إيرادات اليوم</p>
                 <p className="text-2xl font-bold">{stats.todayRevenue} ريال</p>
               </div>
-              <DollarSign className="h-8 w-8 text-muted-foreground" />
+              <CurrencyDollar className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -388,7 +390,7 @@ export function KitchenView() {
         <TabsContent value="settings">
           <Card>
             <CardContent className="p-8 text-center">
-              <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <Gear className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium mb-2 arabic-text">إعدادات المطعم</h3>
               <p className="text-muted-foreground arabic-text">إدارة معلومات المطعم والإعدادات</p>
             </CardContent>

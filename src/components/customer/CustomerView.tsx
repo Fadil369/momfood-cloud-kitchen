@@ -1,12 +1,12 @@
 ﻿import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '@/hooks/useLocalStorage'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
-import { MapPin, Clock, Star, ShoppingCart, Search, Filter, Plus, Minus } from '@phosphor-icons/react'
+import { MapPin, Clock, Star, ShoppingCart, MagnifyingGlass, Funnel, Plus, Minus } from '@phosphor-icons/react'
 import { mockRestaurants, type Restaurant, type MenuItem } from '@/lib/mockData'
 
 interface CartItem {
@@ -88,7 +88,7 @@ export function CustomerView() {
       {/* Search and Filter */}
       <div className="space-y-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <MagnifyingGlass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="ابحث عن المطاعم أو الأطباق..."
             value={searchQuery}

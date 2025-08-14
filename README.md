@@ -84,14 +84,16 @@ npm run build
 
 # Preview production build
 npm run preview
+
+# Run linting
+npm run lint
 ```
 
 #### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run optimize` - Optimize dependencies
+- `npm run dev` - Start development server on http://localhost:5173
+- `npm run build` - Build for production (outputs to `dist/`)
+- `npm run preview` - Preview production build locally
+- `npm run lint` - Run ESLint for code quality
 
 ###  Mock Data
 
@@ -165,19 +167,33 @@ npm run test:coverage
 
 ###  Deployment
 
-#### Production Build
+###  Deployment
+
+#### Cloudflare Pages Deployment
+The application is optimized for Cloudflare Pages deployment:
+
+1. **Automatic Deployment**: Connect your GitHub repository to Cloudflare Pages
+2. **Build Settings**:
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - Node.js version: 18 or later
+3. **SPA Support**: The `public/_redirects` file ensures proper routing for single-page application
+4. **Environment Variables**: Set any `VITE_*` environment variables in Cloudflare Pages dashboard
+
+#### Manual Deployment
 ```bash
 # Create optimized build
 npm run build
 
 # The build files will be in the `dist` directory
+# Upload the contents of `dist/` to your hosting provider
 ```
 
-#### Deployment Options
-- **Vercel**: Recommended for easy deployment
-- **Netlify**: Alternative with great performance
-- **Azure Static Web Apps**: Enterprise-grade hosting
-- **GitHub Pages**: Free hosting for public repositories
+#### Other Deployment Options
+- **Vercel**: Import GitHub repository, zero-config deployment
+- **Netlify**: Connect repository, automatic builds and deployments  
+- **Azure Static Web Apps**: GitHub integration with global distribution
+- **GitHub Pages**: For static hosting (requires build artifact upload)
 
 ###  Contributing
 
