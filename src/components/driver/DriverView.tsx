@@ -83,7 +83,9 @@ export function DriverView() {
         }))
       setAvailableOrders(driverOrders)
     }
+  }, [isOnline]) // Only depend on isOnline status
 
+  useEffect(() => {
     // Update stats based on completed orders
     const todayEarnings = completedOrders.reduce((sum, order) => sum + order.deliveryFee, 0)
     const totalDistance = completedOrders.length * 2.5 // Assuming average 2.5km per delivery
@@ -100,7 +102,7 @@ export function DriverView() {
       deliveryFees: todayEarnings,
       total: todayEarnings + prev.tips + prev.bonuses
     }))
-  }, [isOnline, availableOrders, completedOrders, setAvailableOrders, setStats, setEarnings])
+  }, [completedOrders.length]) // Only depend on completedOrders.length
 
   useEffect(() => {
     // Simulate delivery progress

@@ -74,8 +74,10 @@ export function KitchenView() {
       )
       setOrders(kitchenOrders)
     }
+  }, []) // Empty dependency array to run only once
 
-    // Update stats
+  useEffect(() => {
+    // Update stats when orders change
     const activeOrders = orders.filter(order => 
       ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status)
     ).length
@@ -90,7 +92,7 @@ export function KitchenView() {
       todayOrders: orders.length,
       todayRevenue
     }))
-  }, [orders, setStats])
+  }, [orders.length]) // Only depend on orders.length to avoid infinite loop
 
   const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
     setOrders(currentOrders =>
