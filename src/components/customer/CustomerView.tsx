@@ -1,4 +1,5 @@
 import { useState } from 'react'
+// Customer view component for MomFood app
 import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -164,3 +165,6 @@ function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
     </Card>
   )
 }
+
+// Also export as default
+export default CustomerView;

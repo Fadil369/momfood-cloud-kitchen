@@ -1,4 +1,5 @@
 import { useState } from 'react'
+// Driver view component for MomFood app
 import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -334,3 +335,6 @@ export function DriverView() {
     </div>
   )
 }
+
+// Also export as default
+export default DriverView;

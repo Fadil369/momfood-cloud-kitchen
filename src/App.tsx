@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { House, ShoppingCart, Motorcycle, ChefHat, MapPin, Star } from '@phosphor-icons/react'
-import { CustomerView } from '@/components/customer/CustomerView'
-import { KitchenView } from '@/components/kitchen/KitchenView'
-import { DriverView } from '@/components/driver/DriverView'
+import { House, Motorcycle, ChefHat } from '@phosphor-icons/react'
+// Import main view components
+import { CustomerView } from '@/components/customer/CustomerView.tsx'
+import { KitchenView } from '@/components/kitchen/KitchenView.tsx'
+import { DriverView } from '@/components/driver/DriverView.tsx'
 
 type UserRole = 'customer' | 'kitchen' | 'driver'
 

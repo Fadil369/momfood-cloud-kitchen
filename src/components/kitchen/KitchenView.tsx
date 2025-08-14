@@ -1,4 +1,5 @@
 import { useState } from 'react'
+// Kitchen view component for MomFood app
 import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -264,3 +265,6 @@ export function KitchenView() {
     </div>
   )
 }
+
+// Also export as default
+export default KitchenView;
