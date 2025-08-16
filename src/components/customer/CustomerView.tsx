@@ -1,12 +1,11 @@
 ﻿import { useState, useEffect } from 'react'
 import { useKV } from '@/hooks/useLocalStorage'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Separator } from '@/components/ui/separator'
-import { MapPin, Clock, Star, ShoppingCart, MagnifyingGlass, Funnel, Plus, Minus } from '@phosphor-icons/react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Clock, Star, ShoppingCart, MagnifyingGlass, Plus, Minus } from '@phosphor-icons/react'
 import { mockRestaurants, type Restaurant, type MenuItem } from '@/lib/mockData'
 
 interface CartItem {

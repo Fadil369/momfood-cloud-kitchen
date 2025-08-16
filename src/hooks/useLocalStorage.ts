@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 /**
  * Custom hook for localStorage that mimics the useKV functionality
@@ -13,6 +13,7 @@ export function useKV<T>(key: string, defaultValue: T): [T, (value: T | ((prev: 
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : defaultValue;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn(`Error reading localStorage key "${key}":`, error);
       return defaultValue;
     }
@@ -26,6 +27,7 @@ export function useKV<T>(key: string, defaultValue: T): [T, (value: T | ((prev: 
       setStoredValue(valueToStore);
       window.localStorage.setItem(key, JSON.stringify(valueToStore));
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn(`Error setting localStorage key "${key}":`, error);
     }
   };

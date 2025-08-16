@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -14,11 +14,6 @@ import {
   Receipt,
   Gear,
   Plus,
-  Clock,
-  CheckCircle,
-  XCircle,
-  TrendUp,
-  Users,
   Star,
   Bell,
   Package,
@@ -74,7 +69,7 @@ export function KitchenView() {
       )
       setOrders(kitchenOrders)
     }
-  }, []) // Empty dependency array to run only once
+  }, [orders.length, setOrders])
 
   useEffect(() => {
     // Update stats when orders change
@@ -92,7 +87,7 @@ export function KitchenView() {
       todayOrders: orders.length,
       todayRevenue
     }))
-  }, [orders.length]) // Only depend on orders.length to avoid infinite loop
+  }, [orders, setStats])
 
   const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
     setOrders(currentOrders =>
@@ -145,6 +140,7 @@ export function KitchenView() {
 
   const addMenuItem = () => {
     // In a real app, this would add to the restaurant's menu
+    // eslint-disable-next-line no-console
     console.log('Adding menu item:', newMenuItem)
     setNewMenuItem({
       name: '',
