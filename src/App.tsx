@@ -5,11 +5,10 @@ import { House, Motorcycle, ChefHat } from '@phosphor-icons/react'
 import { CustomerView } from '@/components/customer/CustomerView.tsx'
 import { KitchenView } from '@/components/kitchen/KitchenView.tsx'
 import { DriverView } from '@/components/driver/DriverView.tsx'
-
-type UserRole = 'customer' | 'kitchen' | 'driver'
+import { USER_ROLES, type UserRole } from '@/lib/constants'
 
 function App() {
-  const [currentRole, setCurrentRole] = useState<UserRole>('customer')
+  const [currentRole, setCurrentRole] = useState<UserRole>(USER_ROLES.CUSTOMER)
 
   return (
     <div className="min-h-screen bg-background">
@@ -29,27 +28,27 @@ function App() {
 
             <div className="hidden md:flex items-center gap-2">
               <Button
-                variant={currentRole === 'customer' ? 'default' : 'outline'}
+                variant={currentRole === USER_ROLES.CUSTOMER ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setCurrentRole('customer')}
+                onClick={() => setCurrentRole(USER_ROLES.CUSTOMER)}
                 className="flex items-center gap-2 btn-primary"
               >
                 <House className="h-4 w-4" />
                 <span className="arabic-text" lang="ar">العملاء</span>
               </Button>
               <Button
-                variant={currentRole === 'kitchen' ? 'default' : 'outline'}
+                variant={currentRole === USER_ROLES.KITCHEN ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setCurrentRole('kitchen')}
+                onClick={() => setCurrentRole(USER_ROLES.KITCHEN)}
                 className="flex items-center gap-2 btn-primary"
               >
                 <ChefHat className="h-4 w-4" />
                 <span className="arabic-text" lang="ar">المطاعم</span>
               </Button>
               <Button
-                variant={currentRole === 'driver' ? 'default' : 'outline'}
+                variant={currentRole === USER_ROLES.DRIVER ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setCurrentRole('driver')}
+                onClick={() => setCurrentRole(USER_ROLES.DRIVER)}
                 className="flex items-center gap-2 btn-primary"
               >
                 <Motorcycle className="h-4 w-4" />
@@ -63,9 +62,9 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
         <div className="animate-fade-in">
-          {currentRole === 'customer' && <CustomerView />}
-          {currentRole === 'kitchen' && <KitchenView />}
-          {currentRole === 'driver' && <DriverView />}
+          {currentRole === USER_ROLES.CUSTOMER && <CustomerView />}
+          {currentRole === USER_ROLES.KITCHEN && <KitchenView />}
+          {currentRole === USER_ROLES.DRIVER && <DriverView />}
         </div>
       </main>
 
@@ -73,27 +72,27 @@ function App() {
       <nav className="fixed bottom-0 left-0 right-0 bg-card border-t md:hidden shadow-lg z-50">
         <div className="flex items-center justify-around py-2">
           <Button
-            variant={currentRole === 'customer' ? 'default' : 'ghost'}
+            variant={currentRole === USER_ROLES.CUSTOMER ? 'default' : 'ghost'}
             size="sm"
-            onClick={() => setCurrentRole('customer')}
+            onClick={() => setCurrentRole(USER_ROLES.CUSTOMER)}
             className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
           >
             <House className="h-5 w-5" />
             <span className="text-xs arabic-text" lang="ar">العملاء</span>
           </Button>
           <Button
-            variant={currentRole === 'kitchen' ? 'default' : 'ghost'}
+            variant={currentRole === USER_ROLES.KITCHEN ? 'default' : 'ghost'}
             size="sm"
-            onClick={() => setCurrentRole('kitchen')}
+            onClick={() => setCurrentRole(USER_ROLES.KITCHEN)}
             className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
           >
             <ChefHat className="h-5 w-5" />
             <span className="text-xs arabic-text" lang="ar">المطاعم</span>
           </Button>
           <Button
-            variant={currentRole === 'driver' ? 'default' : 'ghost'}
+            variant={currentRole === USER_ROLES.DRIVER ? 'default' : 'ghost'}
             size="sm"
-            onClick={() => setCurrentRole('driver')}
+            onClick={() => setCurrentRole(USER_ROLES.DRIVER)}
             className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
           >
             <Motorcycle className="h-5 w-5" />
