@@ -8,9 +8,9 @@ interface CalendarProps {
 
 function Calendar({
   className,
-  classNames,
-  showOutsideDays = true,
-  ...props
+  classNames: _classNames,
+  showOutsideDays: _showOutsideDays = true,
+  ..._props
 }: CalendarProps) {
   return (
     <div className={cn("p-3", className)}>
