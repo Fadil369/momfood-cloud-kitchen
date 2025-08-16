@@ -17,12 +17,17 @@ import {
   CheckCircle,
   Package,
   Star,
-  GasPump,
-  Path,
-  Bell,
-  TrendUp
+  Path
 } from '@phosphor-icons/react'
-import { mockOrders, mockDrivers, type Order } from '@/lib/mockData'
+import { mockOrders, type Order } from '@/lib/mockData'
+import { 
+  STORAGE_KEYS, 
+  ORDER_STATUS, 
+  DELIVERY_PROGRESS_INTERVAL, 
+  DELIVERY_PROGRESS_INCREMENT,
+  AVERAGE_DELIVERY_DISTANCE
+} from '@/lib/constants'
+import type { DriverStats, EarningsData } from '@/lib/types'
 
 interface DeliveryOrder extends Order {
   distance: string
@@ -31,28 +36,12 @@ interface DeliveryOrder extends Order {
   deliveryETA: string
 }
 
-interface DriverStats {
-  todayDeliveries: number
-  todayEarnings: number
-  rating: number
-  completionRate: number
-  totalDistance: number
-  avgDeliveryTime: number
-}
-
-interface EarningsData {
-  deliveryFees: number
-  tips: number
-  bonuses: number
-  total: number
-}
-
 export function DriverView() {
-  const [isOnline, setIsOnline] = useKV('driver-online-status', false)
-  const [currentOrder, setCurrentOrder] = useKV<DeliveryOrder | null>('driver-current-order', null)
-  const [availableOrders, setAvailableOrders] = useKV<DeliveryOrder[]>('available-orders', [])
-  const [completedOrders, setCompletedOrders] = useKV<DeliveryOrder[]>('completed-orders', [])
-  const [stats, setStats] = useKV<DriverStats>('driver-stats', {
+  const [isOnline, setIsOnline] = useKV(STORAGE_KEYS.DRIVER_ONLINE_STATUS, false)
+  const [currentOrder, setCurrentOrder] = useKV<DeliveryOrder | null>(STORAGE_KEYS.DRIVER_CURRENT_ORDER, null)
+  const [availableOrders, setAvailableOrders] = useKV<DeliveryOrder[]>(STORAGE_KEYS.AVAILABLE_ORDERS, [])
+  const [completedOrders, setCompletedOrders] = useKV<DeliveryOrder[]>(STORAGE_KEYS.COMPLETED_ORDERS, [])
+  const [stats, setStats] = useKV<DriverStats>(STORAGE_KEYS.DRIVER_STATS, {
     todayDeliveries: 0,
     todayEarnings: 0,
     rating: 4.7,
@@ -60,7 +49,7 @@ export function DriverView() {
     totalDistance: 0,
     avgDeliveryTime: 18
   })
-  const [earnings, setEarnings] = useKV<EarningsData>('driver-earnings', {
+  const [earnings, setEarnings] = useKV<EarningsData>(STORAGE_KEYS.DRIVER_EARNINGS, {
     deliveryFees: 0,
     tips: 0,
     bonuses: 0,
@@ -73,7 +62,7 @@ export function DriverView() {
     // Initialize available orders if empty and driver is online
     if (isOnline && availableOrders.length === 0) {
       const driverOrders: DeliveryOrder[] = mockOrders
-        .filter(order => order.status === 'ready')
+        .filter(order => order.status === ORDER_STATUS.READY)
         .map(order => ({
           ...order,
           distance: '2.5 كم',
@@ -88,7 +77,7 @@ export function DriverView() {
   useEffect(() => {
     // Update stats based on completed orders
     const todayEarnings = completedOrders.reduce((sum, order) => sum + order.deliveryFee, 0)
-    const totalDistance = completedOrders.length * 2.5 // Assuming average 2.5km per delivery
+    const totalDistance = completedOrders.length * AVERAGE_DELIVERY_DISTANCE
     
     setStats(prev => ({
       ...prev,
@@ -102,20 +91,20 @@ export function DriverView() {
       deliveryFees: todayEarnings,
       total: todayEarnings + prev.tips + prev.bonuses
     }))
-  }, [completedOrders.length]) // Only depend on completedOrders.length
+  }, [completedOrders]) // Only depend on completedOrders
 
   useEffect(() => {
     // Simulate delivery progress
-    if (currentOrder && (currentOrder.status === 'picked_up')) {
+    if (currentOrder && (currentOrder.status === ORDER_STATUS.PICKED_UP)) {
       const interval = setInterval(() => {
         setDeliveryProgress(prev => {
           if (prev >= 100) {
             clearInterval(interval)
             return 100
           }
-          return prev + 5
+          return prev + DELIVERY_PROGRESS_INCREMENT
         })
-      }, 2000)
+      }, DELIVERY_PROGRESS_INTERVAL)
 
       return () => clearInterval(interval)
     }
@@ -131,7 +120,7 @@ export function DriverView() {
       const updatedOrder = { ...currentOrder, status }
       setCurrentOrder(updatedOrder)
       
-      if (status === 'picked_up') {
+      if (status === ORDER_STATUS.PICKED_UP) {
         setDeliveryProgress(0)
       }
     }
@@ -139,7 +128,7 @@ export function DriverView() {
 
   const completeOrder = () => {
     if (currentOrder) {
-      const completedOrder = { ...currentOrder, status: 'delivered' as const }
+      const completedOrder = { ...currentOrder, status: ORDER_STATUS.DELIVERED }
       setCompletedOrders(prev => [...prev, completedOrder])
       setCurrentOrder(null)
       setDeliveryProgress(0)
@@ -156,9 +145,9 @@ export function DriverView() {
 
   const getStatusText = (status: DeliveryOrder['status']) => {
     switch (status) {
-      case 'ready': return 'جاهز للاستلام'
-      case 'picked_up': return 'تم الاستلام'
-      case 'delivered': return 'تم التوصيل'
+      case ORDER_STATUS.READY: return 'جاهز للاستلام'
+      case ORDER_STATUS.PICKED_UP: return 'تم الاستلام'
+      case ORDER_STATUS.DELIVERED: return 'تم التوصيل'
       default: return status
     }
   }

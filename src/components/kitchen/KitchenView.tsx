@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -14,26 +14,14 @@ import {
   Receipt,
   Gear,
   Plus,
-  Clock,
-  CheckCircle,
-  XCircle,
-  TrendUp,
-  Users,
   Star,
   Bell,
   Package,
   CurrencyDollar
 } from '@phosphor-icons/react'
 import { mockOrders, type Order } from '@/lib/mockData'
-
-interface KitchenStats {
-  todayOrders: number
-  todayRevenue: number
-  avgRating: number
-  completionRate: number
-  avgPreparationTime: number
-  activeOrders: number
-}
+import { STORAGE_KEYS, ORDER_STATUS, DEFAULT_PREPARATION_TIME } from '@/lib/constants'
+import type { KitchenStats } from '@/lib/types'
 
 interface NewMenuItem {
   name: string
@@ -46,11 +34,11 @@ interface NewMenuItem {
 }
 
 export function KitchenView() {
-  const [orders, setOrders] = useKV<Order[]>('kitchen-orders', [])
-  const [stats, setStats] = useKV<KitchenStats>('kitchen-stats', {
+  const [orders, setOrders] = useKV<Order[]>(STORAGE_KEYS.KITCHEN_ORDERS, [])
+  const [stats, setStats] = useKV<KitchenStats>(STORAGE_KEYS.KITCHEN_STATS, {
     todayOrders: 0,
     todayRevenue: 0,
-    avgRating: 4.6,
+    customerRating: 4.6,
     completionRate: 94,
     avgPreparationTime: 22,
     activeOrders: 0
@@ -62,15 +50,16 @@ export function KitchenView() {
     descriptionAr: '',
     price: 0,
     category: 'main',
-    preparationTime: 15
+    preparationTime: DEFAULT_PREPARATION_TIME
   })
   const [showAddMenuItem, setShowAddMenuItem] = useState(false)
 
   useEffect(() => {
     // Initialize with mock orders if empty
     if (orders.length === 0) {
+      const kitchenOrderStatuses = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED, ORDER_STATUS.PREPARING, ORDER_STATUS.READY] as const
       const kitchenOrders = mockOrders.filter(order => 
-        ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status)
+        (kitchenOrderStatuses as readonly string[]).includes(order.status)
       )
       setOrders(kitchenOrders)
     }
@@ -78,12 +67,13 @@ export function KitchenView() {
 
   useEffect(() => {
     // Update stats when orders change
+    const activeOrderStatuses = [ORDER_STATUS.PENDING, ORDER_STATUS.CONFIRMED, ORDER_STATUS.PREPARING, ORDER_STATUS.READY] as const
     const activeOrders = orders.filter(order => 
-      ['pending', 'confirmed', 'preparing', 'ready'].includes(order.status)
+      (activeOrderStatuses as readonly string[]).includes(order.status)
     ).length
     
     const todayRevenue = orders
-      .filter(order => order.status === 'delivered')
+      .filter(order => order.status === ORDER_STATUS.DELIVERED)
       .reduce((sum, order) => sum + order.total, 0)
 
     setStats(prev => ({
@@ -92,7 +82,7 @@ export function KitchenView() {
       todayOrders: orders.length,
       todayRevenue
     }))
-  }, [orders.length]) // Only depend on orders.length to avoid infinite loop
+  }, [orders]) // Only depend on orders
 
   const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
     setOrders(currentOrders =>
@@ -104,36 +94,36 @@ export function KitchenView() {
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-500'
-      case 'confirmed': return 'bg-blue-500'
-      case 'preparing': return 'bg-orange-500'
-      case 'ready': return 'bg-green-500'
-      case 'picked_up': return 'bg-purple-500'
-      case 'delivered': return 'bg-gray-500'
-      case 'cancelled': return 'bg-red-500'
+      case ORDER_STATUS.PENDING: return 'bg-yellow-500'
+      case ORDER_STATUS.CONFIRMED: return 'bg-blue-500'
+      case ORDER_STATUS.PREPARING: return 'bg-orange-500'
+      case ORDER_STATUS.READY: return 'bg-green-500'
+      case ORDER_STATUS.PICKED_UP: return 'bg-purple-500'
+      case ORDER_STATUS.DELIVERED: return 'bg-gray-500'
+      case ORDER_STATUS.CANCELLED: return 'bg-red-500'
       default: return 'bg-gray-500'
     }
   }
 
   const getStatusText = (status: Order['status']) => {
     switch (status) {
-      case 'pending': return 'في الانتظار'
-      case 'confirmed': return 'مؤكد'
-      case 'preparing': return 'قيد التحضير'
-      case 'ready': return 'جاهز'
-      case 'picked_up': return 'تم الاستلام'
-      case 'delivered': return 'تم التوصيل'
-      case 'cancelled': return 'ملغي'
+      case ORDER_STATUS.PENDING: return 'في الانتظار'
+      case ORDER_STATUS.CONFIRMED: return 'مؤكد'
+      case ORDER_STATUS.PREPARING: return 'قيد التحضير'
+      case ORDER_STATUS.READY: return 'جاهز'
+      case ORDER_STATUS.PICKED_UP: return 'تم الاستلام'
+      case ORDER_STATUS.DELIVERED: return 'تم التوصيل'
+      case ORDER_STATUS.CANCELLED: return 'ملغي'
       default: return status
     }
   }
 
   const getNextStatus = (currentStatus: Order['status']): Order['status'] | null => {
     switch (currentStatus) {
-      case 'pending': return 'confirmed'
-      case 'confirmed': return 'preparing'
-      case 'preparing': return 'ready'
-      case 'ready': return 'picked_up'
+      case ORDER_STATUS.PENDING: return ORDER_STATUS.CONFIRMED
+      case ORDER_STATUS.CONFIRMED: return ORDER_STATUS.PREPARING
+      case ORDER_STATUS.PREPARING: return ORDER_STATUS.READY
+      case ORDER_STATUS.READY: return ORDER_STATUS.PICKED_UP
       default: return null
     }
   }
@@ -145,6 +135,7 @@ export function KitchenView() {
 
   const addMenuItem = () => {
     // In a real app, this would add to the restaurant's menu
+    // eslint-disable-next-line no-console
     console.log('Adding menu item:', newMenuItem)
     setNewMenuItem({
       name: '',
@@ -153,14 +144,15 @@ export function KitchenView() {
       descriptionAr: '',
       price: 0,
       category: 'main',
-      preparationTime: 15
+      preparationTime: DEFAULT_PREPARATION_TIME
     })
     setShowAddMenuItem(false)
   }
 
-  const pendingOrders = orders.filter(order => order.status === 'pending')
+  const pendingOrders = orders.filter(order => order.status === ORDER_STATUS.PENDING)
+  const activeOrderStatuses = [ORDER_STATUS.CONFIRMED, ORDER_STATUS.PREPARING, ORDER_STATUS.READY] as const
   const activeOrdersFiltered = orders.filter(order => 
-    ['confirmed', 'preparing', 'ready'].includes(order.status)
+    (activeOrderStatuses as readonly string[]).includes(order.status)
   )
 
   return (
@@ -218,7 +210,7 @@ export function KitchenView() {
             <div className="flex items-center justify-between">
               <div className="text-right" dir="rtl">
                 <p className="text-sm font-medium text-muted-foreground arabic-text">متوسط التقييم</p>
-                <p className="text-2xl font-bold">{stats.avgRating}</p>
+                <p className="text-2xl font-bold">{stats.customerRating}</p>
               </div>
               <Star className="h-8 w-8 text-muted-foreground" />
             </div>
@@ -371,7 +363,7 @@ export function KitchenView() {
                   <span className="arabic-text">متوسط وقت التحضير</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>{stats.avgRating}/5</span>
+                  <span>{stats.customerRating}/5</span>
                   <span className="arabic-text">متوسط التقييم</span>
                 </div>
               </CardContent>
