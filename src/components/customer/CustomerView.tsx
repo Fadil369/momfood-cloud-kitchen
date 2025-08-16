@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Clock, Star, ShoppingCart, MagnifyingGlass, Plus, Minus } from '@phosphor-icons/react'
 import { mockRestaurants, type Restaurant, type MenuItem } from '@/lib/mockData'
+import { STORAGE_KEYS } from '@/lib/constants'
 
 interface CartItem {
   id: string
@@ -20,7 +21,7 @@ interface CartItem {
 export function CustomerView() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [cart, setCart] = useKV<CartItem[]>('customer-cart', [])
+  const [cart, setCart] = useKV<CartItem[]>(STORAGE_KEYS.CUSTOMER_CART, [])
   const [restaurants, setRestaurants] = useState<Restaurant[]>([])
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null)
 

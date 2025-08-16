@@ -72,7 +72,7 @@ export function DriverView() {
         }))
       setAvailableOrders(driverOrders)
     }
-  }, [isOnline, availableOrders.length, setAvailableOrders])
+  }, [isOnline]) // Only depend on isOnline status
 
   useEffect(() => {
     // Update stats based on completed orders
@@ -91,7 +91,7 @@ export function DriverView() {
       deliveryFees: todayEarnings,
       total: todayEarnings + prev.tips + prev.bonuses
     }))
-  }, [completedOrders, setStats, setEarnings])
+  }, [completedOrders]) // Only depend on completedOrders
 
   useEffect(() => {
     // Simulate delivery progress
