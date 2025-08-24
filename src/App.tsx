@@ -5,6 +5,7 @@ import { CustomerPage } from '@/pages/CustomerPage'
 import { KitchenPage } from '@/pages/KitchenPage'
 import { DriverPage } from '@/pages/DriverPage'
 import { RestaurantDetailPage } from '@/pages/RestaurantDetailPage'
+import { Toaster } from '@/components/ui/sonner'
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -63,6 +64,7 @@ function App() {
         <Route path="/" element={<Navigate to="/customer" replace />} />
         <Route path="*" element={<Navigate to="/customer" replace />} />
       </Routes>
+      <Toaster position="top-center" />
     </BrowserRouter>
   )
 }

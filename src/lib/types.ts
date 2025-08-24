@@ -75,6 +75,7 @@ export interface EarningsData {
   tips: number;
   bonuses: number;
   total: number;
+  completedOrders: number;
 }
 
 // Kitchen/Restaurant related types

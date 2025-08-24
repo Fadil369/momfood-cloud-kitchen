@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useCallback } from 'react'
 import { useKV } from '@/hooks/useLocalStorage'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Switch } from '@/components/ui/switch'
@@ -53,7 +54,8 @@ export function DriverView() {
     deliveryFees: 0,
     tips: 0,
     bonuses: 0,
-    total: 0
+    total: 0,
+    completedOrders: 0
   })
   const [showEarningsDetail, setShowEarningsDetail] = useState(false)
   const [deliveryProgress, setDeliveryProgress] = useState(0)
@@ -114,36 +116,73 @@ export function DriverView() {
   }, [currentOrder?.status, currentOrder?.id])
 
   const acceptOrder = useCallback((order: DeliveryOrder) => {
+    if (!isOnline) {
+      toast.error('يجب أن تكون متصل لقبول الطلبات')
+      return
+    }
+
     setCurrentOrder(order)
     setAvailableOrders(current => current.filter(o => o.id !== order.id))
-  }, [setCurrentOrder, setAvailableOrders])
+    
+    toast.success('تم قبول الطلب بنجاح!', {
+      description: `الطلب ${order.id} - ${order.total.toFixed(2)} ر.س`
+    })
+  }, [isOnline, setCurrentOrder, setAvailableOrders])
 
   const updateOrderStatus = useCallback((status: DeliveryOrder['status']) => {
-    if (currentOrder) {
-      const updatedOrder = { ...currentOrder, status }
-      setCurrentOrder(updatedOrder)
-      
-      if (status === ORDER_STATUS.PICKED_UP) {
-        setDeliveryProgress(0)
-      }
+    if (!currentOrder) {
+      toast.error('لا يوجد طلب نشط')
+      return
     }
+
+    const statusMessages = {
+      [ORDER_STATUS.PICKED_UP]: 'تم استلام الطلب من المطعم',
+      [ORDER_STATUS.DELIVERED]: 'تم توصيل الطلب بنجاح'
+    }
+
+    const updatedOrder = { ...currentOrder, status, updatedAt: new Date() }
+    setCurrentOrder(updatedOrder)
+    
+    if (status === ORDER_STATUS.PICKED_UP) {
+      setDeliveryProgress(0)
+    }
+
+    toast.success(statusMessages[status] || 'تم تحديث حالة الطلب', {
+      description: `الطلب ${currentOrder.id}`
+    })
   }, [currentOrder, setCurrentOrder])
 
   const completeOrder = useCallback(() => {
-    if (currentOrder) {
-      const completedOrder = { ...currentOrder, status: ORDER_STATUS.DELIVERED }
-      setCompletedOrders(prev => [...prev, completedOrder])
-      setCurrentOrder(null)
-      setDeliveryProgress(0)
-      
-      // Add tip simulation
-      const randomTip = Math.floor(Math.random() * 15) + 5 // 5-20 SAR tip
-      setEarnings(prev => ({
-        ...prev,
-        tips: prev.tips + randomTip,
-        total: prev.total + randomTip
-      }))
+    if (!currentOrder) {
+      toast.error('لا يوجد طلب نشط لإتمامه')
+      return
     }
+
+    const completedOrder = { 
+      ...currentOrder, 
+      status: ORDER_STATUS.DELIVERED,
+      deliveredAt: new Date()
+    }
+    
+    setCompletedOrders(prev => [...prev, completedOrder])
+    setCurrentOrder(null)
+    setDeliveryProgress(0)
+    
+    // Add tip simulation
+    const randomTip = Math.floor(Math.random() * 15) + 5 // 5-20 SAR tip
+    const deliveryFee = 8 // Fixed delivery fee
+    
+    setEarnings(prev => ({
+      ...prev,
+      tips: prev.tips + randomTip,
+      deliveryFees: prev.deliveryFees + deliveryFee,
+      total: prev.total + randomTip + deliveryFee,
+      completedOrders: prev.completedOrders + 1
+    }))
+
+    toast.success('تم توصيل الطلب بنجاح! 🎉', {
+      description: `حصلت على ${deliveryFee + randomTip} ر.س (${deliveryFee} توصيل + ${randomTip} إكرامية)`
+    })
   }, [currentOrder, setCompletedOrders, setCurrentOrder, setEarnings])
 
   const getStatusText = (status: DeliveryOrder['status']) => {
@@ -161,11 +200,34 @@ export function DriverView() {
   }, [])
 
   const callCustomer = useCallback(() => {
-    // In a real app, this would initiate a call
-    if (currentOrder) {
-      alert(`الاتصال بـ ${currentOrder.customerName} على ${currentOrder.customerPhone}`)
+    if (!currentOrder) {
+      toast.error('لا يوجد طلب نشط')
+      return
     }
+    
+    toast.info('جاري الاتصال بالعميل...', {
+      description: `${currentOrder.customerName} - ${currentOrder.customerPhone}`
+    })
+    
+    // In a real app, this would initiate a call
+    console.log('Calling customer:', currentOrder.customerPhone)
   }, [currentOrder])
+
+  const toggleOnlineStatus = useCallback(() => {
+    const newStatus = !isOnline
+    
+    setIsOnline(newStatus)
+
+    if (newStatus) {
+      toast.success('أنت متصل الآن! 🟢', {
+        description: 'ستتلقى طلبات التوصيل'
+      })
+    } else {
+      toast.info('أنت غير متصل الآن 🔴', {
+        description: 'لن تتلقى طلبات جديدة'
+      })
+    }
+  }, [isOnline, setIsOnline])
 
   return (
     <div className="space-y-6">
@@ -181,7 +243,7 @@ export function DriverView() {
           </span>
           <Switch
             checked={isOnline}
-            onCheckedChange={setIsOnline}
+            onCheckedChange={toggleOnlineStatus}
             className="data-[state=checked]:bg-green-500"
           />
         </div>

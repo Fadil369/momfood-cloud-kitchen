@@ -29,6 +29,8 @@ export const STORAGE_KEYS = {
   DRIVER_STATS: 'driver-stats',
   DRIVER_EARNINGS: 'driver-earnings',
   CUSTOMER_CART: 'customer-cart',
+  CUSTOMER_INFO: 'customer-info',
+  CUSTOMER_ORDERS: 'customer-orders',
   SELECTED_RESTAURANT: 'selected-restaurant',
   KITCHEN_ORDERS: 'kitchen-orders',
   KITCHEN_STATS: 'kitchen-stats'

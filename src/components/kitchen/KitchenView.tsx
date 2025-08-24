@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useKV } from '@/hooks/useLocalStorage'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -85,12 +86,50 @@ export function KitchenView() {
   }, [orders, setStats])
 
   const updateOrderStatus = useCallback((orderId: string, newStatus: Order['status']) => {
+    const order = orders.find(o => o.id === orderId)
+    if (!order) {
+      toast.error('لم يتم العثور على الطلب')
+      return
+    }
+
+    const statusMessages = {
+      [ORDER_STATUS.CONFIRMED]: 'تم تأكيد الطلب',
+      [ORDER_STATUS.PREPARING]: 'بدء تحضير الطلب',
+      [ORDER_STATUS.READY]: 'الطلب جاهز للاستلام',
+      [ORDER_STATUS.PICKED_UP]: 'تم استلام الطلب',
+      [ORDER_STATUS.DELIVERED]: 'تم توصيل الطلب',
+      [ORDER_STATUS.CANCELLED]: 'تم إلغاء الطلب'
+    }
+
     setOrders(currentOrders =>
       currentOrders.map(order =>
-        order.id === orderId ? { ...order, status: newStatus } : order
+        order.id === orderId ? { 
+          ...order, 
+          status: newStatus,
+          updatedAt: new Date()
+        } : order
       )
     )
-  }, [setOrders])
+
+    // Update stats based on status change
+    if (newStatus === ORDER_STATUS.DELIVERED) {
+      setStats(prevStats => ({
+        ...prevStats,
+        todayOrders: prevStats.todayOrders + 1,
+        todayRevenue: prevStats.todayRevenue + order.total,
+        activeOrders: Math.max(0, prevStats.activeOrders - 1)
+      }))
+    } else if (newStatus === ORDER_STATUS.CONFIRMED && order.status === ORDER_STATUS.PENDING) {
+      setStats(prevStats => ({
+        ...prevStats,
+        activeOrders: prevStats.activeOrders + 1
+      }))
+    }
+
+    toast.success(statusMessages[newStatus] || 'تم تحديث حالة الطلب', {
+      description: `الطلب ${orderId.slice(-6)}`
+    })
+  }, [orders, setOrders, setStats])
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
@@ -133,10 +172,37 @@ export function KitchenView() {
     return nextStatus ? getStatusText(nextStatus) : ''
   }
 
-  const addMenuItem = () => {
-    // In a real app, this would add to the restaurant's menu
-    // eslint-disable-next-line no-console
-    console.log('Adding menu item:', newMenuItem)
+  const addMenuItem = useCallback(() => {
+    // Validation
+    if (!newMenuItem.name.trim() || !newMenuItem.nameAr.trim()) {
+      toast.error('يرجى ملء اسم الصنف بالعربي والإنجليزي')
+      return
+    }
+    
+    if (newMenuItem.price <= 0) {
+      toast.error('يرجى إدخال سعر صحيح للصنف')
+      return
+    }
+
+    if (!newMenuItem.description.trim()) {
+      toast.error('يرجى إضافة وصف للصنف')
+      return
+    }
+
+    // Create new menu item
+    const menuItem = {
+      id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      ...newMenuItem,
+      available: true,
+      rating: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    // In a real app, this would be sent to the backend
+    console.log('Adding menu item:', menuItem)
+    
+    // Reset form
     setNewMenuItem({
       name: '',
       nameAr: '',
@@ -146,8 +212,13 @@ export function KitchenView() {
       category: 'main',
       preparationTime: DEFAULT_PREPARATION_TIME
     })
+    
     setShowAddMenuItem(false)
-  }
+    
+    toast.success('تم إضافة الصنف الجديد بنجاح!', {
+      description: `${newMenuItem.nameAr} - ${newMenuItem.price} ر.س`
+    })
+  }, [newMenuItem])
 
   const pendingOrders = useMemo(() => 
     orders.filter(order => order.status === ORDER_STATUS.PENDING), 
