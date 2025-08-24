@@ -108,6 +108,10 @@ export class RealTimeManager {
     }
   }
 
+  public isConnected(): boolean {
+    return this.ws !== null && this.ws.readyState === WebSocket.OPEN;
+  }
+
   private send(data: any): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(data));
@@ -133,6 +137,13 @@ export class RealTimeManager {
   }
 
   onNotification(callback: (notification: NotificationData) => void): () => void {
+      if (index > -1) {
+        this.orderUpdateCallbacks.splice(index, 1);
+      }
+    };
+  }
+
+  onOrderUpdate(callback: (update: OrderUpdate) => void): () => void {
     this.notificationCallbacks.push(callback);
     
     // Return unsubscribe function
@@ -200,7 +211,6 @@ export class NotificationManager {
         icon: '/icon-192x192.png',
         badge: '/icon-96x96.png',
         tag: notification.id,
-        timestamp: notification.timestamp.getTime(),
         requireInteraction: notification.type === 'order'
       });
     }
@@ -338,7 +348,7 @@ export const initializeRealTimeFeatures = (): void => {
       // Page is hidden, could reduce update frequency
     } else {
       // Page is visible, ensure connection is active
-      if (!rtm) {
+      if (!rtm.isConnected()) {
         rtm.connect();
       }
     }

@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Chart,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
@@ -27,8 +26,8 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import {
-  TrendingUp,
-  TrendingDown,
+  TrendUp,
+  TrendDown,
   Users,
   ShoppingCart,
   CurrencyDollar,
