@@ -170,15 +170,30 @@ npm run test:coverage
 ###  Deployment
 
 #### Cloudflare Pages Deployment
-The application is optimized for Cloudflare Pages deployment:
 
-1. **Automatic Deployment**: Connect your GitHub repository to Cloudflare Pages
-2. **Build Settings**:
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Node.js version: 18 or later
-3. **SPA Support**: The `public/_redirects` file ensures proper routing for single-page application
-4. **Environment Variables**: Set any `VITE_*` environment variables in Cloudflare Pages dashboard
+The application is optimized for Cloudflare Pages deployment with backend API via Cloudflare Workers:
+
+1. **Frontend (Cloudflare Pages)**:
+   - **Automatic Deployment**: Connect your GitHub repository to Cloudflare Pages
+   - **Build Settings**:
+     - Build command: `npm run build`
+     - Build output directory: `dist`
+     - Node.js version: 18 or later
+   - **SPA Support**: The `public/_redirects` file ensures proper routing for single-page application
+   - **Environment Variables**: Set any `VITE_*` environment variables in Cloudflare Pages dashboard
+
+2. **Backend API (Cloudflare Workers)**:
+   - **Workers Deployment**: Deploy API endpoints using Wrangler CLI
+   - **KV Storage**: Configured for persistent data storage
+   - **R2 Storage**: Optional for image uploads
+   - **Real-time Features**: Built-in support for WebSockets and Server-Sent Events
+
+3. **Configuration Files**:
+   - `wrangler.toml`: Worker configuration and environment settings
+   - `workers/src/worker.ts`: API endpoints and business logic
+   - `.github/workflows/deploy.yml`: Automated CI/CD deployment
+
+For detailed deployment instructions, see [CLOUDFLARE_DEPLOYMENT.md](CLOUDFLARE_DEPLOYMENT.md).
 
 #### Manual Deployment
 ```bash

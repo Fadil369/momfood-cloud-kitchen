@@ -1,0 +1,23 @@
+{
+  "name": "momfood-workers",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers for MomFood Cloud Kitchen",
+  "main": "src/worker.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "tail": "wrangler tail",
+    "test": "vitest",
+    "types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240806.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.0.5",
+    "wrangler": "^3.70.0"
+  },
+  "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.4"
+  }
+}

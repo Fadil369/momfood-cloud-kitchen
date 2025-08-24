@@ -1,0 +1,49 @@
+name = "momfood-cloud-kitchen"
+main = "src/worker.ts"
+compatibility_date = "2024-08-24"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+name = "momfood-cloud-kitchen"
+
+[env.staging]
+name = "momfood-cloud-kitchen-staging"
+
+# Environment variables for all environments
+[vars]
+ENVIRONMENT = "production"
+
+# KV Namespace bindings for data storage
+[[kv_namespaces]]
+binding = "ORDERS_KV"
+preview_id = "your-preview-kv-namespace-id"
+id = "your-production-kv-namespace-id"
+
+[[kv_namespaces]]
+binding = "CUSTOMERS_KV"
+preview_id = "your-preview-customers-kv-namespace-id"
+id = "your-production-customers-kv-namespace-id"
+
+[[kv_namespaces]]
+binding = "RESTAURANTS_KV"
+preview_id = "your-preview-restaurants-kv-namespace-id"
+id = "your-production-restaurants-kv-namespace-id"
+
+# R2 bucket for image uploads (if needed)
+[[r2_buckets]]
+binding = "IMAGES_BUCKET"
+bucket_name = "momfood-images"
+preview_bucket_name = "momfood-images-preview"
+
+# Durable Objects for real-time order tracking
+# [[durable_objects.bindings]]
+# name = "ORDER_TRACKER"
+# class_name = "OrderTracker"
+
+# Rate limiting
+[limits]
+cpu_ms = 100
+
+# Build configuration
+[build]
+command = "npm run build"
