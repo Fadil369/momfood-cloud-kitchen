@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { useKV } from '@/hooks/useLocalStorage'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -72,7 +72,7 @@ export function DriverView() {
         }))
       setAvailableOrders(driverOrders)
     }
-  }, [isOnline]) // Only depend on isOnline status
+  }, [isOnline, availableOrders.length, setAvailableOrders])
 
   useEffect(() => {
     // Update stats based on completed orders
@@ -91,7 +91,7 @@ export function DriverView() {
       deliveryFees: todayEarnings,
       total: todayEarnings + prev.tips + prev.bonuses
     }))
-  }, [completedOrders]) // Only depend on completedOrders
+  }, [completedOrders, setStats, setEarnings])
 
   useEffect(() => {
     // Simulate delivery progress
@@ -107,15 +107,18 @@ export function DriverView() {
       }, DELIVERY_PROGRESS_INTERVAL)
 
       return () => clearInterval(interval)
+    } else {
+      // Reset progress when order is not in delivery state
+      setDeliveryProgress(0)
     }
-  }, [currentOrder])
+  }, [currentOrder?.status, currentOrder?.id])
 
-  const acceptOrder = (order: DeliveryOrder) => {
+  const acceptOrder = useCallback((order: DeliveryOrder) => {
     setCurrentOrder(order)
     setAvailableOrders(current => current.filter(o => o.id !== order.id))
-  }
+  }, [setCurrentOrder, setAvailableOrders])
 
-  const updateOrderStatus = (status: DeliveryOrder['status']) => {
+  const updateOrderStatus = useCallback((status: DeliveryOrder['status']) => {
     if (currentOrder) {
       const updatedOrder = { ...currentOrder, status }
       setCurrentOrder(updatedOrder)
@@ -124,9 +127,9 @@ export function DriverView() {
         setDeliveryProgress(0)
       }
     }
-  }
+  }, [currentOrder, setCurrentOrder])
 
-  const completeOrder = () => {
+  const completeOrder = useCallback(() => {
     if (currentOrder) {
       const completedOrder = { ...currentOrder, status: ORDER_STATUS.DELIVERED }
       setCompletedOrders(prev => [...prev, completedOrder])
@@ -141,7 +144,7 @@ export function DriverView() {
         total: prev.total + randomTip
       }))
     }
-  }
+  }, [currentOrder, setCompletedOrders, setCurrentOrder, setEarnings])
 
   const getStatusText = (status: DeliveryOrder['status']) => {
     switch (status) {
@@ -152,17 +155,17 @@ export function DriverView() {
     }
   }
 
-  const simulateNavigation = () => {
+  const simulateNavigation = useCallback(() => {
     // In a real app, this would open navigation app
     alert('فتح التنقل في تطبيق الخرائط...')
-  }
+  }, [])
 
-  const callCustomer = () => {
+  const callCustomer = useCallback(() => {
     // In a real app, this would initiate a call
     if (currentOrder) {
       alert(`الاتصال بـ ${currentOrder.customerName} على ${currentOrder.customerPhone}`)
     }
-  }
+  }, [currentOrder])
 
   return (
     <div className="space-y-6">

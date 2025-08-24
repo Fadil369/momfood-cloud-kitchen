@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useMemo, useCallback } from 'react'
 import { useKV } from '@/hooks/useLocalStorage'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -63,7 +63,7 @@ export function KitchenView() {
       )
       setOrders(kitchenOrders)
     }
-  }, []) // Empty dependency array to run only once
+  }, [orders.length, setOrders])
 
   useEffect(() => {
     // Update stats when orders change
@@ -82,15 +82,15 @@ export function KitchenView() {
       todayOrders: orders.length,
       todayRevenue
     }))
-  }, [orders]) // Only depend on orders
+  }, [orders, setStats])
 
-  const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
+  const updateOrderStatus = useCallback((orderId: string, newStatus: Order['status']) => {
     setOrders(currentOrders =>
       currentOrders.map(order =>
         order.id === orderId ? { ...order, status: newStatus } : order
       )
     )
-  }
+  }, [setOrders])
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
@@ -149,11 +149,17 @@ export function KitchenView() {
     setShowAddMenuItem(false)
   }
 
-  const pendingOrders = orders.filter(order => order.status === ORDER_STATUS.PENDING)
-  const activeOrderStatuses = [ORDER_STATUS.CONFIRMED, ORDER_STATUS.PREPARING, ORDER_STATUS.READY] as const
-  const activeOrdersFiltered = orders.filter(order => 
-    (activeOrderStatuses as readonly string[]).includes(order.status)
+  const pendingOrders = useMemo(() => 
+    orders.filter(order => order.status === ORDER_STATUS.PENDING), 
+    [orders]
   )
+  
+  const activeOrdersFiltered = useMemo(() => {
+    const activeOrderStatuses = [ORDER_STATUS.CONFIRMED, ORDER_STATUS.PREPARING, ORDER_STATUS.READY] as const
+    return orders.filter(order => 
+      (activeOrderStatuses as readonly string[]).includes(order.status)
+    )
+  }, [orders])
 
   return (
     <div className="space-y-6">
@@ -253,10 +259,10 @@ export function KitchenView() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {orders.filter(order => order.status !== 'delivered' && order.status !== 'cancelled').map((order) => (
-              <Card key={order.id} className="border-l-4" style={{ 
-                borderLeftColor: `var(--color-${getStatusColor(order.status).split('-')[1]}-500)` 
-              }}>
+            {orders.filter(order => order.status !== 'delivered' && order.status !== 'cancelled').map((order) => {
+              const statusColor = getStatusColor(order.status);
+              return (
+              <Card key={order.id} className={`border-l-4 ${statusColor}`}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">طلب #{order.id.slice(-4)}</CardTitle>
@@ -320,7 +326,7 @@ export function KitchenView() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )})}
           </div>
 
           {orders.filter(order => order.status !== 'delivered' && order.status !== 'cancelled').length === 0 && (

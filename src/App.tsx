@@ -1,15 +1,12 @@
-﻿import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { House, Motorcycle, ChefHat } from '@phosphor-icons/react'
-// Import main view components
-import { CustomerView } from '@/components/customer/CustomerView.tsx'
-import { KitchenView } from '@/components/kitchen/KitchenView.tsx'
-import { DriverView } from '@/components/driver/DriverView.tsx'
-import { USER_ROLES, type UserRole } from '@/lib/constants'
+﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { ChefHat } from '@phosphor-icons/react'
+import { Navigation } from '@/components/layout/Navigation'
+import { CustomerPage } from '@/pages/CustomerPage'
+import { KitchenPage } from '@/pages/KitchenPage'
+import { DriverPage } from '@/pages/DriverPage'
+import { RestaurantDetailPage } from '@/pages/RestaurantDetailPage'
 
-function App() {
-  const [currentRole, setCurrentRole] = useState<UserRole>(USER_ROLES.CUSTOMER)
-
+function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -26,35 +23,7 @@ function App() {
               </div>
             </div>
 
-            <div className="hidden md:flex items-center gap-2">
-              <Button
-                variant={currentRole === USER_ROLES.CUSTOMER ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCurrentRole(USER_ROLES.CUSTOMER)}
-                className="flex items-center gap-2 btn-primary"
-              >
-                <House className="h-4 w-4" />
-                <span className="arabic-text" lang="ar">العملاء</span>
-              </Button>
-              <Button
-                variant={currentRole === USER_ROLES.KITCHEN ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCurrentRole(USER_ROLES.KITCHEN)}
-                className="flex items-center gap-2 btn-primary"
-              >
-                <ChefHat className="h-4 w-4" />
-                <span className="arabic-text" lang="ar">المطاعم</span>
-              </Button>
-              <Button
-                variant={currentRole === USER_ROLES.DRIVER ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCurrentRole(USER_ROLES.DRIVER)}
-                className="flex items-center gap-2 btn-primary"
-              >
-                <Motorcycle className="h-4 w-4" />
-                <span className="arabic-text" lang="ar">السائقين</span>
-              </Button>
-            </div>
+            <Navigation />
           </div>
         </div>
       </header>
@@ -62,45 +31,39 @@ function App() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 pb-24 md:pb-6">
         <div className="animate-fade-in">
-          {currentRole === USER_ROLES.CUSTOMER && <CustomerView />}
-          {currentRole === USER_ROLES.KITCHEN && <KitchenView />}
-          {currentRole === USER_ROLES.DRIVER && <DriverView />}
+          {children}
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t md:hidden shadow-lg z-50">
-        <div className="flex items-center justify-around py-2">
-          <Button
-            variant={currentRole === USER_ROLES.CUSTOMER ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setCurrentRole(USER_ROLES.CUSTOMER)}
-            className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
-          >
-            <House className="h-5 w-5" />
-            <span className="text-xs arabic-text" lang="ar">العملاء</span>
-          </Button>
-          <Button
-            variant={currentRole === USER_ROLES.KITCHEN ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setCurrentRole(USER_ROLES.KITCHEN)}
-            className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
-          >
-            <ChefHat className="h-5 w-5" />
-            <span className="text-xs arabic-text" lang="ar">المطاعم</span>
-          </Button>
-          <Button
-            variant={currentRole === USER_ROLES.DRIVER ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setCurrentRole(USER_ROLES.DRIVER)}
-            className="flex flex-col items-center gap-1 h-auto py-2 btn-primary"
-          >
-            <Motorcycle className="h-5 w-5" />
-            <span className="text-xs arabic-text" lang="ar">السائقين</span>
-          </Button>
-        </div>
-      </nav>
+      <Navigation />
     </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/customer" element={
+          <AppLayout>
+            <CustomerPage />
+          </AppLayout>
+        } />
+        <Route path="/kitchen" element={
+          <AppLayout>
+            <KitchenPage />
+          </AppLayout>
+        } />
+        <Route path="/driver" element={
+          <AppLayout>
+            <DriverPage />
+          </AppLayout>
+        } />
+        <Route path="/restaurant/:id" element={<RestaurantDetailPage />} />
+        <Route path="/" element={<Navigate to="/customer" replace />} />
+        <Route path="*" element={<Navigate to="/customer" replace />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

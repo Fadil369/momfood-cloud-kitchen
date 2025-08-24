@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useKV } from '@/hooks/useLocalStorage'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -6,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Clock, Star, ShoppingCart, MagnifyingGlass, Plus, Minus } from '@phosphor-icons/react'
+import React from 'react'
 import { mockRestaurants, type Restaurant, type MenuItem } from '@/lib/mockData'
 import { STORAGE_KEYS } from '@/lib/constants'
 
@@ -19,6 +21,7 @@ interface CartItem {
 }
 
 export function CustomerView() {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [cart, setCart] = useKV<CartItem[]>(STORAGE_KEYS.CUSTOMER_CART, [])
@@ -37,16 +40,20 @@ export function CustomerView() {
     { id: 'desserts', name: 'حلويات', nameEn: 'Desserts' },
   ]
 
-  const filteredRestaurants = restaurants.filter(restaurant => {
-    const matchesSearch = restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         restaurant.nameAr.includes(searchQuery)
-    const matchesCategory = selectedCategory === 'all' || restaurant.cuisine === selectedCategory
-    return matchesSearch && matchesCategory && restaurant.isOpen
-  })
+  const filteredRestaurants = useMemo(() => {
+    return restaurants.filter(restaurant => {
+      const matchesSearch = restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           restaurant.nameAr.includes(searchQuery)
+      const matchesCategory = selectedCategory === 'all' || restaurant.cuisine === selectedCategory
+      return matchesSearch && matchesCategory && restaurant.isOpen
+    })
+  }, [restaurants, searchQuery, selectedCategory])
 
-  const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const cartTotal = useMemo(() => {
+    return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  }, [cart])
 
-  const addToCart = (menuItem: MenuItem, restaurantId: string) => {
+  const addToCart = useCallback((menuItem: MenuItem, restaurantId: string) => {
     setCart(currentCart => {
       const existingItem = currentCart.find(item => item.id === menuItem.id)
       if (existingItem) {
@@ -66,9 +73,9 @@ export function CustomerView() {
         }]
       }
     })
-  }
+  }, [])
 
-  const removeFromCart = (itemId: string) => {
+  const removeFromCart = useCallback((itemId: string) => {
     setCart(currentCart => {
       return currentCart.map(item =>
         item.id === itemId && item.quantity > 1
@@ -76,12 +83,16 @@ export function CustomerView() {
           : item
       ).filter(item => item.quantity > 0)
     })
-  }
+  }, [])
 
-  const getItemQuantity = (itemId: string): number => {
+  const getItemQuantity = useCallback((itemId: string): number => {
     const item = cart.find(cartItem => cartItem.id === itemId)
     return item ? item.quantity : 0
-  }
+  }, [cart])
+
+  const handleRestaurantSelect = useCallback((restaurant: Restaurant) => {
+    navigate(`/restaurant/${restaurant.id}`)
+  }, [navigate])
 
   return (
     <div className="space-y-6">
@@ -129,10 +140,10 @@ export function CustomerView() {
         <h2 className="text-xl font-semibold arabic-text">المطاعم المميزة</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredRestaurants.filter(r => r.featured).map((restaurant) => (
-            <RestaurantCard 
+            <MemoizedRestaurantCard 
               key={restaurant.id} 
               restaurant={restaurant} 
-              onSelect={setSelectedRestaurant}
+              onSelect={handleRestaurantSelect}
             />
           ))}
         </div>
@@ -143,10 +154,10 @@ export function CustomerView() {
         <h2 className="text-xl font-semibold arabic-text">جميع المطاعم</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredRestaurants.map((restaurant) => (
-            <RestaurantCard 
+            <MemoizedRestaurantCard 
               key={restaurant.id} 
               restaurant={restaurant} 
-              onSelect={setSelectedRestaurant}
+              onSelect={handleRestaurantSelect}
             />
           ))}
         </div>
@@ -252,14 +263,16 @@ export function CustomerView() {
   )
 }
 
-function RestaurantCard({ restaurant, onSelect }: { 
+const RestaurantCard = React.memo(function RestaurantCard({ restaurant, onSelect }: { 
   restaurant: Restaurant
   onSelect: (restaurant: Restaurant) => void 
 }) {
+  const handleClick = useCallback(() => onSelect(restaurant), [restaurant, onSelect])
+  
   return (
     <Card 
       className="overflow-hidden hover:shadow-md transition-all duration-200 cursor-pointer group"
-      onClick={() => onSelect(restaurant)}
+      onClick={handleClick}
     >
       <div className="aspect-video bg-muted relative">
         {restaurant.featured && (
@@ -306,7 +319,9 @@ function RestaurantCard({ restaurant, onSelect }: {
       </CardContent>
     </Card>
   )
-}
+})
+
+const MemoizedRestaurantCard = React.memo(RestaurantCard)
 
 function getCuisineNameAr(cuisine: string): string {
   const cuisineMap: Record<string, string> = {
