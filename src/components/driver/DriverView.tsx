@@ -72,7 +72,8 @@ export function DriverView() {
         }))
       setAvailableOrders(driverOrders)
     }
-  }, [isOnline]) // Only depend on isOnline status
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOnline, availableOrders.length]) // setAvailableOrders is stable
 
   useEffect(() => {
     // Update stats based on completed orders
@@ -91,7 +92,8 @@ export function DriverView() {
       deliveryFees: todayEarnings,
       total: todayEarnings + prev.tips + prev.bonuses
     }))
-  }, [completedOrders]) // Only depend on completedOrders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completedOrders]) // setStats and setEarnings are stable
 
   useEffect(() => {
     // Simulate delivery progress

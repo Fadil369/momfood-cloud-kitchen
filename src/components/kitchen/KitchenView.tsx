@@ -63,7 +63,8 @@ export function KitchenView() {
       )
       setOrders(kitchenOrders)
     }
-  }, []) // Empty dependency array to run only once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orders.length]) // setOrders is stable
 
   useEffect(() => {
     // Update stats when orders change
@@ -82,7 +83,8 @@ export function KitchenView() {
       todayOrders: orders.length,
       todayRevenue
     }))
-  }, [orders]) // Only depend on orders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orders]) // setStats is stable
 
   const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
     setOrders(currentOrders =>
